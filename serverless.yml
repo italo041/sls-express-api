@@ -1,0 +1,27 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: italo041
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: sls-express-api
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: sls-express-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  environment:
+    NODE_ENV: ${opt:stage, 'dev'}
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+functions:
+  api:
+    handler: src/handler.handler
+    events:
+      - httpApi: "*"
+
+custom:
+  serverless-offline:
+    httpPort: 3000

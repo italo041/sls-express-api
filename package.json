@@ -1,0 +1,28 @@
+{
+  "name": "sls-express-api",
+  "version": "1.0.0",
+  "description": "Serverless Express API with Clean Architecture and TypeScript",
+  "main": "dist/handler.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "sls offline",
+    "deploy": "npm run build && sls deploy",
+    "test": "jest",
+    "dev": "npm run build && npm run start"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "serverless-http": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.19",
+    "jest": "^29.7.0",
+    "serverless": "^3.38.0",
+    "serverless-offline": "^13.3.3",
+    "serverless-plugin-typescript": "^2.1.5",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.3.3"
+  }
+}
