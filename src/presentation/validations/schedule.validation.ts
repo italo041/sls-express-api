@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { CreateScheduleDto } from '../entities/schedule.entity';
+import { CreateScheduleDto } from '../../domain/entities/schedule.entity';
 
 export const createScheduleDtoSchema = Joi.object<CreateScheduleDto>({
   insureId: Joi.string().required().length(5).messages({
@@ -15,7 +15,7 @@ export const createScheduleDtoSchema = Joi.object<CreateScheduleDto>({
     'any.required': 'scheduleId es requerido',
   }),
 
-  countryISO: Joi.string().valid('PE', 'CL').messages({
+  countryISO: Joi.string().valid('PE', 'CL').required().messages({
     'any.only': 'countryISO solo puede ser PE o CL',
     'string.length': 'countryISO solo debe tener 2 caracteres',
     'string.pattern.base': 'countryISO solo debe contener letras mayúsculas',

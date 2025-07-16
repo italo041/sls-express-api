@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { ApiResponse } from '../../domain/interfaces/api.interface';
+import { getValidationErrorMessages } from '../validations/schedule.validation';
 
 export const validationMiddleware = (schema: Joi.ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction): void => {
@@ -11,7 +12,7 @@ export const validationMiddleware = (schema: Joi.ObjectSchema) => {
     });
 
     if (error) {
-      const errorMessages = error.details.map(detail => detail.message);
+      const errorMessages = getValidationErrorMessages(error);
       const response: ApiResponse = {
         success: false,
         error: 'Validation failed',
