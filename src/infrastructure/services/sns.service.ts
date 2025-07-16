@@ -1,5 +1,6 @@
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { NotificationMessage, NotificationService } from '../../domain/interfaces/notification.interface';
+import { Schedule } from '../../../.build/src/domain/entities/schedule.entity';
 
 export class SNSService implements NotificationService {
   private snsClient: SNSClient;
@@ -32,10 +33,10 @@ export class SNSService implements NotificationService {
     }
   }
 
-  async publishScheduleCreated(schedule: any): Promise<void> {
+  async publishScheduleCreated(schedule: Schedule): Promise<void> {
     const message = JSON.stringify({
       eventType: 'SCHEDULE_CREATED',
-      scheduleId: schedule.id,
+      scheduleId: schedule.scheduleId,
       insureId: schedule.insureId,
       countryISO: schedule.countryISO,
       state: schedule.state,
