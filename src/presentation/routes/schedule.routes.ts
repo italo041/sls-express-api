@@ -6,10 +6,7 @@ import { createScheduleDtoSchema } from '../../domain/validation/schedule.valida
 export function createScheduleRoutes(scheduleController: ScheduleController): Router {
   const router = Router();
 
-  router.post('/', 
-    validationMiddleware(createScheduleDtoSchema),
-    (req: Request, res: Response) => scheduleController.createSchedule(req, res)
-  );
+  router.post('/', validationMiddleware(createScheduleDtoSchema), (req: Request, res: Response) => scheduleController.createSchedule(req, res));
 
   return router;
 }

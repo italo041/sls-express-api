@@ -15,7 +15,7 @@ export function createApp(): express.Application {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    
+
     if (req.method === 'OPTIONS') {
       res.sendStatus(200);
     } else {
@@ -33,8 +33,8 @@ export function createApp(): express.Application {
         uptime: process.uptime(),
         endpoints: {
           templates: '/schedules',
-        }
-      }
+        },
+      },
     };
     res.status(200).json(response);
   });
@@ -46,8 +46,8 @@ export function createApp(): express.Application {
       data: {
         status: 'OK',
         timestamp: new Date().toISOString(),
-        uptime: process.uptime()
-      }
+        uptime: process.uptime(),
+      },
     };
     res.status(200).json(response);
   });
@@ -67,12 +67,12 @@ export function createApp(): express.Application {
 
   app.use((error: Error, req: Request, res: Response, next: any) => {
     console.error('Error:', error);
-    
+
     const response: ApiResponse = {
       success: false,
       error: error.message || 'Internal server error',
     };
-    
+
     res.status(500).json(response);
   });
 

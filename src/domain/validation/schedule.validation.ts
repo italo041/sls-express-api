@@ -15,14 +15,12 @@ export const createScheduleDtoSchema = Joi.object<CreateScheduleDto>({
     'any.required': 'scheduleId es requerido',
   }),
 
-  countryISO: Joi.string()
-    .valid('PE', 'CL')
-    .messages({
-      'any.only': 'countryISO solo puede ser PE o CL',
-      'string.length': 'countryISO solo debe tener 2 caracteres',
-      'string.pattern.base': 'countryISO solo debe contener letras mayúsculas',
-      'any.required': 'countryISO es requerido',
-    }),
+  countryISO: Joi.string().valid('PE', 'CL').messages({
+    'any.only': 'countryISO solo puede ser PE o CL',
+    'string.length': 'countryISO solo debe tener 2 caracteres',
+    'string.pattern.base': 'countryISO solo debe contener letras mayúsculas',
+    'any.required': 'countryISO es requerido',
+  }),
 });
 
 export const validateCreateScheduleDto = (data: any): { error?: Joi.ValidationError; value?: CreateScheduleDto } => {

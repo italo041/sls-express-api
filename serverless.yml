@@ -24,7 +24,7 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource:
-            - "Fn::GetAtt": [SchedulesTable, Arn]
+            - 'Fn::GetAtt': [SchedulesTable, Arn]
 
 plugins:
   - serverless-plugin-typescript
@@ -34,7 +34,7 @@ functions:
   api:
     handler: src/handler.handler
     events:
-      - httpApi: "*"
+      - httpApi: '*'
 
 custom:
   serverless-offline:
