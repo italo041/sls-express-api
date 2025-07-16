@@ -1,6 +1,6 @@
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { NotificationMessage, NotificationService } from '../../domain/interfaces/notification.interface';
-import { Schedule } from '../../../.build/src/domain/entities/schedule.entity';
+import { Schedule } from '../../domain/entities/schedule.entity';
 
 export class SNSService implements NotificationService {
   private snsClient: SNSClient;
