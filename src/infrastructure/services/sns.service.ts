@@ -1,13 +1,7 @@
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
+import { NotificationMessage, NotificationService } from '../../domain/interfaces/notification.interface';
 
-export interface SNSMessage {
-  topicArn: string;
-  message: string;
-  subject?: string;
-  messageAttributes?: Record<string, any>;
-}
-
-export class SNSService {
+export class SNSService implements NotificationService {
   private snsClient: SNSClient;
 
   constructor() {
@@ -16,18 +10,18 @@ export class SNSService {
     });
   }
 
-  async publishMessage(snsMessage: SNSMessage): Promise<void> {
+  async publishMessage(notificationMessage: NotificationMessage): Promise<void> {
     try {
 
-      if (!snsMessage.topicArn || snsMessage.topicArn.trim() === '') {
+      if (!notificationMessage.topicArn || notificationMessage.topicArn.trim() === '') {
         throw new Error('SNS Topic ARN is missing or empty');
       }
 
       const command = new PublishCommand({
-        TopicArn: snsMessage.topicArn,
-        Message: snsMessage.message,
-        Subject: snsMessage.subject,
-        MessageAttributes: snsMessage.messageAttributes,
+        TopicArn: notificationMessage.topicArn,
+        Message: notificationMessage.message,
+        Subject: notificationMessage.subject,
+        MessageAttributes: notificationMessage.messageAttributes,
       });
 
       const result = await this.snsClient.send(command);

@@ -1,18 +1,18 @@
 import { Schedule, CreateScheduleDto } from '../../domain/entities/schedule.entity';
 import { ScheduleRepository, ScheduleUseCase } from '../../domain/repositories/schedule.repository';
-import { SNSService } from '../../infrastructure/services/sns.service';
+import { NotificationService } from '../../domain/interfaces/notification.interface';
 
 export class ScheduleUseCaseImpl implements ScheduleUseCase {
   constructor(
     private scheduleRepository: ScheduleRepository,
-    private snsService: SNSService
+    private notificationService: NotificationService
   ) {}
 
   async createSchedule(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
     try {
       const schedule = await this.scheduleRepository.create(createScheduleDto);
 
-      await this.snsService.publishScheduleCreated(schedule);
+      await this.notificationService.publishScheduleCreated(schedule);
 
       return schedule;
     } catch (error) {
