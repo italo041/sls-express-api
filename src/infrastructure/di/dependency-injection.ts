@@ -1,6 +1,7 @@
 import { ScheduleController } from '../../presentation/controllers/schedule.controller';
 import { DynamoScheduleRepository } from '../repositories/dynamodb/dynamo-schedule.repository';
 import { ScheduleUseCaseImpl } from '../../application/use-cases/schedule.use-case';
+import { SNSService } from '../services/sns.service';
 
 export class DependencyInjection {
   private static scheduleController: ScheduleController;
@@ -8,7 +9,8 @@ export class DependencyInjection {
   static getScheduleController(): ScheduleController {
     if (!this.scheduleController) {
       const scheduleRepository = new DynamoScheduleRepository();
-      const scheduleUseCase = new ScheduleUseCaseImpl(scheduleRepository);
+      const snsService = new SNSService();
+      const scheduleUseCase = new ScheduleUseCaseImpl(scheduleRepository, snsService);
       this.scheduleController = new ScheduleController(scheduleUseCase);
     }
 

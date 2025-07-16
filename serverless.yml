@@ -5,6 +5,8 @@ app: sls-express-api
 # "service" is the name of this project. This will also be added to your AWS resource names.
 service: sls-express-api
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: nodejs20.x
@@ -12,6 +14,7 @@ provider:
   environment:
     NODE_ENV: ${opt:stage, 'dev'}
     SCHEDULES_TABLE: ${self:service}-schedules-${opt:stage, 'dev'}
+    SNS_TOPIC_ARN: arn:aws:sns:${self:provider.region}:${env:AWS_ACCOUNT_ID}:${self:service}-schedule-topic-${opt:stage, 'dev'}
   iam:
     role:
       statements:
@@ -25,10 +28,25 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - 'Fn::GetAtt': [SchedulesTable, Arn]
+        - Effect: Allow
+          Action:
+            - sns:Publish
+          Resource:
+            - Ref: ScheduleTopic
+        - Effect: Allow
+          Action:
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+            - sqs:SendMessage
+          Resource:
+            - 'Fn::GetAtt': [SqsPeQueue, Arn]
+            - 'Fn::GetAtt': [SqsClQueue, Arn]
 
 plugins:
   - serverless-plugin-typescript
   - serverless-offline
+  - serverless-dotenv-plugin
 
 functions:
   api:
@@ -39,6 +57,11 @@ functions:
 custom:
   serverless-offline:
     httpPort: 3000
+  dotenv:
+    path: .env
+    logging: true
+    include:
+      - AWS_ACCOUNT_ID
 
 resources:
   Resources:
@@ -70,6 +93,112 @@ resources:
           - Key: Service
             Value: ${self:service}
 
+    # SNS Topic
+    ScheduleTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-schedule-topic-${opt:stage, 'dev'}
+        DisplayName: Schedule Notifications Topic
+        Tags:
+          - Key: Environment
+            Value: ${opt:stage, 'dev'}
+          - Key: Service
+            Value: ${self:service}
+
+    # SQS Queue for Peru
+    SqsPeQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-sqs-pe-${opt:stage, 'dev'}
+        VisibilityTimeout: 300
+        MessageRetentionPeriod: 1209600
+        Tags:
+          - Key: Environment
+            Value: ${opt:stage, 'dev'}
+          - Key: Service
+            Value: ${self:service}
+          - Key: Country
+            Value: PE
+
+    # SQS Queue for Chile
+    SqsClQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-sqs-cl-${opt:stage, 'dev'}
+        VisibilityTimeout: 300
+        MessageRetentionPeriod: 1209600
+        Tags:
+          - Key: Environment
+            Value: ${opt:stage, 'dev'}
+          - Key: Service
+            Value: ${self:service}
+          - Key: Country
+            Value: CL
+
+    # SQS Queue Policy for Peru
+    SqsPeQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - !Ref SqsPeQueue
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: sns.amazonaws.com
+              Action:
+                - sqs:SendMessage
+              Resource:
+                Fn::GetAtt: [SqsPeQueue, Arn]
+              Condition:
+                ArnEquals:
+                  aws:SourceArn:
+                    Ref: ScheduleTopic
+
+    # SQS Queue Policy for Chile
+    SqsClQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - !Ref SqsClQueue
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: sns.amazonaws.com
+              Action:
+                - sqs:SendMessage
+              Resource:
+                Fn::GetAtt: [SqsClQueue, Arn]
+              Condition:
+                ArnEquals:
+                  aws:SourceArn:
+                    Ref: ScheduleTopic
+
+    # SNS Subscription for Peru SQS
+    SqsPeSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: ScheduleTopic
+        Protocol: sqs
+        Endpoint:
+          Fn::GetAtt: [SqsPeQueue, Arn]
+        FilterPolicy:
+          country: ["PE"]
+
+    # SNS Subscription for Chile SQS
+    SqsClSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: ScheduleTopic
+        Protocol: sqs
+        Endpoint:
+          Fn::GetAtt: [SqsClQueue, Arn]
+        FilterPolicy:
+          country: ["CL"]
+
   Outputs:
     SchedulesTable:
       Description: DynamoDB Table for Schedules
@@ -77,3 +206,24 @@ resources:
         Ref: SchedulesTable
       Export:
         Name: ${self:service}-schedules-table-${opt:stage, 'dev'}
+    
+    ScheduleTopic:
+      Description: SNS Topic for Schedule Notifications
+      Value:
+        Ref: ScheduleTopic
+      Export:
+        Name: ${self:service}-schedule-topic-${opt:stage, 'dev'}
+    
+    SqsPeQueue:
+      Description: SQS Queue for Peru
+      Value:
+        Ref: SqsPeQueue
+      Export:
+        Name: ${self:service}-sqs-pe-queue-${opt:stage, 'dev'}
+    
+    SqsClQueue:
+      Description: SQS Queue for Chile
+      Value:
+        Ref: SqsClQueue
+      Export:
+        Name: ${self:service}-sqs-cl-queue-${opt:stage, 'dev'}
