@@ -20,4 +20,13 @@ export class ScheduleUseCaseImpl implements ScheduleUseCase {
       throw error;
     }
   }
+
+  async getAllSchedules(): Promise<Schedule[]> {
+    try {
+      return await this.scheduleRepository.findAll();
+    } catch (error) {
+      console.error('Error in getAllSchedules use case:', error);
+      throw error;
+    }
+  }
 }

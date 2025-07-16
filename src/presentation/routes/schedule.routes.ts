@@ -7,6 +7,7 @@ export function createScheduleRoutes(scheduleController: ScheduleController): Ro
   const router = Router();
 
   router.post('/', validationMiddleware(createScheduleDtoSchema), (req: Request, res: Response) => scheduleController.createSchedule(req, res));
+  router.get('/', (req: Request, res: Response) => scheduleController.getAllSchedules(req, res));
 
   return router;
 }

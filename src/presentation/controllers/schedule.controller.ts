@@ -27,4 +27,25 @@ export class ScheduleController {
       res.status(500).json(response);
     }
   }
+
+  async getAllSchedules(req: Request, res: Response): Promise<void> {
+    try {
+      const schedules = await this.scheduleUseCase.getAllSchedules();
+
+      const response: ApiResponse = {
+        success: true,
+        data: schedules,
+        message: 'Schedules fetched successfully',
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      const response: ApiResponse = {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+
+      res.status(500).json(response);
+    }
+  }
 }
