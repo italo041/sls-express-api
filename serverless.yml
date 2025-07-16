@@ -11,6 +11,20 @@ provider:
   region: us-east-1
   environment:
     NODE_ENV: ${opt:stage, 'dev'}
+    SCHEDULES_TABLE: ${self:service}-schedules-${opt:stage, 'dev'}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "Fn::GetAtt": [SchedulesTable, Arn]
 
 plugins:
   - serverless-plugin-typescript
@@ -25,3 +39,41 @@ functions:
 custom:
   serverless-offline:
     httpPort: 3000
+
+resources:
+  Resources:
+    SchedulesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-schedules-${opt:stage, 'dev'}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: insureId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: insureId-index
+            KeySchema:
+              - AttributeName: insureId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        Tags:
+          - Key: Environment
+            Value: ${opt:stage, 'dev'}
+          - Key: Service
+            Value: ${self:service}
+
+  Outputs:
+    SchedulesTable:
+      Description: DynamoDB Table for Schedules
+      Value:
+        Ref: SchedulesTable
+      Export:
+        Name: ${self:service}-schedules-table-${opt:stage, 'dev'}

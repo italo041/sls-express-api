@@ -17,12 +17,14 @@
     "@aws-sdk/client-dynamodb": "^3.845.0",
     "@aws-sdk/lib-dynamodb": "^3.845.0",
     "express": "^4.19.2",
+    "joi": "^17.13.3",
     "serverless-http": "^3.2.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
+    "@types/joi": "^17.2.3",
     "@types/node": "^20.11.19",
     "jest": "^29.7.0",
     "prettier": "^3.6.2",
