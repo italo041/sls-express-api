@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { createTemplateRoutes } from './presentation/routes/template.routes';
 import { DependencyInjection } from './infrastructure/di/dependency-injection';
 import { ApiResponse } from './domain/interfaces/api.interface';
 import { createScheduleRoutes } from './presentation/routes/schedule.routes';
@@ -33,7 +32,7 @@ export function createApp(): express.Application {
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
         endpoints: {
-          templates: '/templates',
+          templates: '/schedules',
         }
       }
     };
@@ -54,9 +53,7 @@ export function createApp(): express.Application {
   });
 
   // Inyección de dependencias y configuración de rutas
-  const userController = DependencyInjection.getTemplateController();
   const scheduleController = DependencyInjection.getScheduleController();
-  app.use('/templates', createTemplateRoutes(userController));
   app.use('/schedules', createScheduleRoutes(scheduleController));
 
   // Middlewares de errores
