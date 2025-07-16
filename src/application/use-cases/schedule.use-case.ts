@@ -1,5 +1,6 @@
 import { Schedule, CreateScheduleDto } from '../../domain/entities/schedule.entity';
-import { ScheduleRepository, ScheduleUseCase } from '../../domain/repositories/schedule.repository';
+import { ScheduleRepository } from '../../domain/contracts/repositories/schedule.repository';
+import { ScheduleUseCase } from '../../domain/contracts/use-cases/schedule.use-case';
 import { NotificationService } from '../../domain/interfaces/notification.interface';
 
 export class ScheduleUseCaseImpl implements ScheduleUseCase {

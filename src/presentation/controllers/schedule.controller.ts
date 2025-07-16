@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ApiResponse } from '../../domain/interfaces/api.interface';
-import { ScheduleUseCase } from '../../domain/repositories/schedule.repository';
+import { ScheduleUseCase } from '../../domain/contracts/use-cases/schedule.use-case';
 import { CreateScheduleDto } from '../../domain/entities/schedule.entity';
 
 export class ScheduleController {

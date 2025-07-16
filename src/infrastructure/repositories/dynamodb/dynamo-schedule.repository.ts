@@ -1,6 +1,6 @@
 import { PutCommand, DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { Schedule, CreateScheduleDto } from '../../../domain/entities/schedule.entity';
-import { ScheduleRepository } from '../../../domain/repositories/schedule.repository';
+import { ScheduleRepository } from '../../../domain/contracts/repositories/schedule.repository';
 import { DynamoDBClientConfig } from '../../config/dynamodb.client';
 import * as uuid from 'uuid';
 
