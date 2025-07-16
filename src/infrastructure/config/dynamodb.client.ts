@@ -15,12 +15,4 @@ export class DynamoDBClientConfig {
 
     return this.instance;
   }
-
-  static createClient(): DynamoDBDocumentClient {
-    const client = new DynamoDBClient({
-      region: process.env.AWS_REGION || 'us-east-1',
-    });
-
-    return DynamoDBDocumentClient.from(client);
-  }
 }
