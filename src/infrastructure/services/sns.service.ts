@@ -1,6 +1,6 @@
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { NotificationMessage, NotificationService } from '../../domain/interfaces/notification.interface';
-import { Schedule } from '../../domain/entities/schedule.entity';
+import { AppointmentRequest } from '../../domain/entities/appointment-request.entity';
 
 export class SNSService implements NotificationService {
   private snsClient: SNSClient;
@@ -33,29 +33,29 @@ export class SNSService implements NotificationService {
     }
   }
 
-  async publishScheduleCreated(schedule: Schedule): Promise<void> {
+  async publishAppointmentRequestCreated(appointmentRequest: AppointmentRequest): Promise<void> {
     const message = JSON.stringify({
-      eventType: 'SCHEDULE_CREATED',
-      scheduleId: schedule.scheduleId,
-      insureId: schedule.insureId,
-      countryISO: schedule.countryISO,
-      state: schedule.state,
-      dynamoId: schedule.id,
+      eventType: 'APPOINTMENT_REQUEST_CREATED',
+      scheduleId: appointmentRequest.scheduleId,
+      insureId: appointmentRequest.insureId,
+      countryISO: appointmentRequest.countryISO,
+      state: appointmentRequest.state,
+      dynamoId: appointmentRequest.id,
       timestamp: new Date().toISOString(),
     });
 
     await this.publishMessage({
       topicArn: process.env.SNS_TOPIC_ARN || '',
       message,
-      subject: 'Schedule Created',
+      subject: 'Appointment Request Created',
       messageAttributes: {
         eventType: {
           DataType: 'String',
-          StringValue: 'SCHEDULE_CREATED',
+          StringValue: 'APPOINTMENT_REQUEST_CREATED',
         },
         country: {
           DataType: 'String',
-          StringValue: schedule.countryISO,
+          StringValue: appointmentRequest.countryISO,
         },
       },
     });

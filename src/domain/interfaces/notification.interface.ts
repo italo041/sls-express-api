@@ -7,5 +7,5 @@ export interface NotificationMessage {
 
 export interface NotificationService {
   publishMessage(message: NotificationMessage): Promise<void>;
-  publishScheduleCreated(schedule: any): Promise<void>;
+  publishAppointmentRequestCreated(appointmentRequest: any): Promise<void>;
 }

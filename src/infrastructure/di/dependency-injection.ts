@@ -1,28 +1,28 @@
-import { ScheduleController } from '../../presentation/controllers/schedule.controller';
-import { DynamoScheduleRepository } from '../repositories/dynamodb/dynamo-schedule.repository';
-import { ScheduleUseCaseImpl } from '../../application/use-cases/schedule.use-case';
+import { AppointmentRequestController } from '../../presentation/controllers/appointment-request.controller';
+import { DynamoAppointmentRequestRepository } from '../repositories/dynamodb/dynamo-appointment-request.repository';
+import { AppointmentRequestUseCaseImpl } from '../../application/use-cases/appointment-request.use-case';
 import { SNSService } from '../services/sns.service';
 
 export class DependencyInjection {
-  private static scheduleController: ScheduleController;
-  private static scheduleUseCase: ScheduleUseCaseImpl;
+  private static appointmentRequestController: AppointmentRequestController;
+  private static appointmentRequestUseCase: AppointmentRequestUseCaseImpl;
 
-  static getScheduleUseCase(): ScheduleUseCaseImpl {
-    if (!this.scheduleUseCase) {
-      const scheduleRepository = new DynamoScheduleRepository();
+  static getAppointmentRequestUseCase(): AppointmentRequestUseCaseImpl {
+    if (!this.appointmentRequestUseCase) {
+      const scheduleRepository = new DynamoAppointmentRequestRepository();
       const snsService = new SNSService();
-      this.scheduleUseCase = new ScheduleUseCaseImpl(scheduleRepository, snsService);
+      this.appointmentRequestUseCase = new AppointmentRequestUseCaseImpl(scheduleRepository, snsService);
     }
 
-    return this.scheduleUseCase;
+    return this.appointmentRequestUseCase;
   }
 
-  static getScheduleController(): ScheduleController {
-    if (!this.scheduleController) {
-      const scheduleUseCase = this.getScheduleUseCase();
-      this.scheduleController = new ScheduleController(scheduleUseCase);
+  static getAppointmentRequestController(): AppointmentRequestController {
+    if (!this.appointmentRequestController) {
+      const scheduleUseCase = this.getAppointmentRequestUseCase();
+      this.appointmentRequestController = new AppointmentRequestController(scheduleUseCase);
     }
 
-    return this.scheduleController;
+    return this.appointmentRequestController;
   }
 }

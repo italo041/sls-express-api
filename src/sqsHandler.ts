@@ -1,11 +1,11 @@
 import { SQSHandler, SQSEvent } from 'aws-lambda';
 import { DependencyInjection } from './infrastructure/di/dependency-injection';
-import { ScheduleState, UpdateScheduleDto } from './domain/entities/schedule.entity';
+import { AppointmentRequestStatus, UpdateAppointmentRequestDto } from './domain/entities/appointment-request.entity';
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
   console.log(`Received ${event.Records.length} messages from SQS`);
 
-  const scheduleUseCase = DependencyInjection.getScheduleUseCase();
+  const appointmentRequestUseCase = DependencyInjection.getAppointmentRequestUseCase();
 
   for (const record of event.Records) {
     try {
@@ -14,15 +14,15 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
 
       const snsMessage = JSON.parse(record.body);
       const messagePayload = snsMessage.detail;
-      console.log(`Schedule data:`, messagePayload);
+      console.log(`Appointment data:`, messagePayload);
 
-      const updateScheduleDto: UpdateScheduleDto = {
+      const updateAppointmentRequestDto: UpdateAppointmentRequestDto = {
         id: messagePayload.dynamoId,
-        state: ScheduleState.COMPLETED,
+        state: AppointmentRequestStatus.COMPLETED,
       };
 
-      const schedule = await scheduleUseCase.updateSchedule(updateScheduleDto);
-      console.log(`Schedule updated successfully:`, schedule);
+      const appointment = await appointmentRequestUseCase.updateAppointmentRequest(updateAppointmentRequestDto);
+      console.log(`Appointment updated successfully:`, appointment);
       console.log(`Message ${record.messageId} processed successfully`);
     } catch (error) {
       console.error(`Error processing message ${record.messageId}:`, error);
