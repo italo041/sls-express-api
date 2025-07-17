@@ -3,26 +3,23 @@ export enum CountryISO {
   CL = 'CL',
 }
 
-export enum AppointmentRequestStatus {
+export enum AppointmentStatus {
   PENDING = 'PENDING',
   COMPLETED = 'COMPLETED',
   CANCELED = 'CANCELED',
 }
 
-export interface AppointmentRequest {
+export interface Appointment {
   id: string;
   insureId: string;
   scheduleId: number;
   countryISO: CountryISO;
-  state: AppointmentRequestStatus;
+  state: AppointmentStatus;
+  dynamoId: string;
 }
 
-export interface CreateAppointmentRequestDto {
+export interface CreateAppointmentDto {
   insureId: string;
   scheduleId: number;
   countryISO: CountryISO;
-}
-export interface UpdateAppointmentRequestDto {
-  id: string;
-  state: AppointmentRequestStatus;
 }
