@@ -67,38 +67,9 @@ plugins:
   - serverless-offline
   - serverless-dotenv-plugin
 
-functions:
-  api:
-    handler: src/infrastructure/handlers/api.handler.handler
-    events:
-      - httpApi: '*'
-  sqsHandler:
-    handler: src/infrastructure/handlers/sqs.handler.handler
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt: [AppointmentsEventsQueue, Arn]
-          batchSize: 10
-  appointmentPeHandler:
-    handler: src/infrastructure/handlers/appointment-pe.handler.handler
-    timeout: 30
-    logRetentionInDays: 14
-    events:
-      - sqs:
-          arn: 
-            Fn::GetAtt: [SqsPeQueue, Arn]
-          batchSize: 10
-  appointmentClHandler:
-    handler: src/infrastructure/handlers/appointment-cl.handler.handler
-    timeout: 30
-    logRetentionInDays: 14
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt: [SqsClQueue, Arn]
-          batchSize: 10
-
 custom:
+  serverless-plugin-typescript:
+    tsConfigFileLocation: './tsconfig.json'
   serverless-offline:
     httpPort: 3000
     lambdaPort: 3011
@@ -118,6 +89,38 @@ custom:
       - DB_USERNAME_CL
       - DB_PASSWORD_CL
       - DB_NAME_CL
+
+functions:
+  api:
+    handler: src/handler.apiHandler
+    events:
+      - httpApi: '*'
+  sqsHandler:
+    handler: src/handler.sqsHandler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [AppointmentsEventsQueue, Arn]
+          batchSize: 10
+  appointmentPeHandler:
+    handler: src/handler.appointmentPeHandler
+    timeout: 30
+    logRetentionInDays: 14
+    events:
+      - sqs:
+          arn: 
+            Fn::GetAtt: [SqsPeQueue, Arn]
+          batchSize: 10
+  appointmentClHandler:
+    handler: src/handler.appointmentClHandler
+    timeout: 30
+    logRetentionInDays: 14
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [SqsClQueue, Arn]
+          batchSize: 10
+    
 
 resources:
   Resources:

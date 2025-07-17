@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { TimestampEntity } from './timestamp.entity';
-import { Appointment, AppointmentStatus, CountryISO } from '../../../../domain/entities/appointment.entity';
+import { Appointment, AppointmentStatus, CountryISO } from '../../../../../domain/entities/appointment.entity';
 
 @Entity('appointment')
 export class AppointmentTypeOrmEntity extends TimestampEntity implements Appointment {

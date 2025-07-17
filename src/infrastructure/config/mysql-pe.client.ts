@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { AppointmentTypeOrmEntity } from '../repositories/mysql-pe/entities/appointment.entity';
+import { AppointmentTypeOrmEntity } from '../repositories/mysql/pe/entities/appointment.entity';
 
 const databaseConfig: DataSourceOptions = {
   type: 'mysql',

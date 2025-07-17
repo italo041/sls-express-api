@@ -1,8 +1,8 @@
 import { Repository } from 'typeorm';
-import { AppointmentRepository } from '../../../domain/contracts/repositories/appointment.repository';
+import { AppointmentRepository } from '../../../../domain/contracts/repositories/appointment.repository';
 import { AppointmentTypeOrmEntity } from './entities/appointment.entity';
-import { AppDataSource } from '../../config/mysql-pe.client';
-import { AppointmentStatus, CreateAppointmentDto } from '../../../domain/entities/appointment.entity';
+import { AppDataSource } from '../../../config/mysql-pe.client';
+import { AppointmentStatus, CreateAppointmentDto } from '../../../../domain/entities/appointment.entity';
 
 export class AppointmentRepositoryImpl implements AppointmentRepository {
   private repository: Repository<AppointmentTypeOrmEntity>;

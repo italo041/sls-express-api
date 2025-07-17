@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { DependencyInjection } from '../di/dependency-injection';
+import { ControllerDI } from '../di/controller.di';
 import { ApiResponse } from '../../domain/interfaces/api.interface';
 import { createAppointmentRequestRoutes } from '../../presentation/routes/appointment-request.routes';
 
@@ -53,7 +53,7 @@ export function createApp(): express.Application {
   });
 
   // Inyección de dependencias y configuración de rutas
-  const appointmentRequestController = DependencyInjection.getAppointmentRequestController();
+  const appointmentRequestController = ControllerDI.getAppointmentRequestController();
   app.use('/appointment-request', createAppointmentRequestRoutes(appointmentRequestController));
 
   // Middlewares de errores

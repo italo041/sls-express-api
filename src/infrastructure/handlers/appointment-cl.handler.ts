@@ -1,5 +1,5 @@
 import { SQSHandler, SQSEvent } from 'aws-lambda';
-import { DependencyInjection } from '../di/dependency-injection';
+import { UseCaseCLDI } from '../di/use-case-cl.di';
 import { initializeDatabase } from '../config/mysql-cl.client';
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
@@ -13,7 +13,7 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
     throw error;
   }
 
-  const appointmentUseCase = DependencyInjection.getAppointmentUseCaseCL();
+  const appointmentUseCase = UseCaseCLDI.getAppointmentUseCase();
 
   for (const record of event.Records) {
     try {
