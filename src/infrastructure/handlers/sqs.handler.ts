@@ -1,7 +1,7 @@
 import { SQSHandler, SQSEvent } from 'aws-lambda';
-import { DependencyInjection } from './infrastructure/di/dependency-injection';
-import { UpdateAppointmentRequestDto } from './domain/entities/appointment-request.entity';
-import { Appointment } from './domain/entities/appointment.entity';
+import { DependencyInjection } from '../di/dependency-injection';
+import { UpdateAppointmentRequestDto } from '../../domain/entities/appointment-request.entity';
+import { Appointment } from '../../domain/entities/appointment.entity';
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
   console.log(`Received ${event.Records.length} messages from SQS`);

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { DependencyInjection } from './infrastructure/di/dependency-injection';
-import { ApiResponse } from './domain/interfaces/api.interface';
-import { createAppointmentRequestRoutes } from './presentation/routes/appointment-request.routes';
+import { DependencyInjection } from '../di/dependency-injection';
+import { ApiResponse } from '../../domain/interfaces/api.interface';
+import { createAppointmentRequestRoutes } from '../../presentation/routes/appointment-request.routes';
 
 export function createApp(): express.Application {
   const app = express();

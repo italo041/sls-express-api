@@ -69,18 +69,18 @@ plugins:
 
 functions:
   api:
-    handler: src/handler.handler
+    handler: src/infrastructure/handlers/api.handler.handler
     events:
       - httpApi: '*'
   sqsHandler:
-    handler: src/sqsHandler.handler
+    handler: src/infrastructure/handlers/sqs.handler.handler
     events:
       - sqs:
           arn:
             Fn::GetAtt: [AppointmentsEventsQueue, Arn]
           batchSize: 10
   appointmentPeHandler:
-    handler: src/appointment-pe-handler.handler
+    handler: src/infrastructure/handlers/appointment-pe.handler.handler
     timeout: 30
     logRetentionInDays: 14
     events:
@@ -89,7 +89,7 @@ functions:
             Fn::GetAtt: [SqsPeQueue, Arn]
           batchSize: 10
   appointmentClHandler:
-    handler: src/appointment-cl-handler.handler
+    handler: src/infrastructure/handlers/appointment-cl.handler.handler
     timeout: 30
     logRetentionInDays: 14
     events:

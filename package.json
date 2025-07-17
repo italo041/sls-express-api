@@ -2,7 +2,7 @@
   "name": "sls-express-api",
   "version": "1.0.0",
   "description": "Serverless Express API with Clean Architecture and TypeScript",
-  "main": "dist/handler.js",
+  "main": "infrastructure/handlers/api.handler.js",
   "scripts": {
     "build": "tsc",
     "start": "sls offline",

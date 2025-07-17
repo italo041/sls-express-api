@@ -1,6 +1,6 @@
 import { SQSHandler, SQSEvent } from 'aws-lambda';
-import { DependencyInjection } from './infrastructure/di/dependency-injection';
-import { initializeDatabase } from './infrastructure/config/mysql-cl.client';
+import { DependencyInjection } from '../di/dependency-injection';
+import { initializeDatabase } from '../config/mysql-cl.client';
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
   console.log(`Received ${event.Records.length} messages from SQS`);
