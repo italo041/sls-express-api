@@ -26,3 +26,7 @@ export interface UpdateAppointmentRequestDto {
   id: string;
   state: AppointmentRequestStatus;
 }
+
+export interface GetAllAppointmentRequestDto {
+  insureId: string; 
+}

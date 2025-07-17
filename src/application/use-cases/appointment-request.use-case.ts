@@ -1,4 +1,4 @@
-import { AppointmentRequest, CreateAppointmentRequestDto, UpdateAppointmentRequestDto } from '../../domain/entities/appointment-request.entity';
+import { AppointmentRequest, CreateAppointmentRequestDto, GetAllAppointmentRequestDto, UpdateAppointmentRequestDto } from '../../domain/entities/appointment-request.entity';
 import { AppointmentRequestRepository } from '../../domain/contracts/repositories/appointment-request.repository';
 import { AppointmentRequestUseCase } from '../../domain/contracts/use-cases/appointment-request.use-case';
 import { NotificationService } from '../../domain/interfaces/notification.interface';
@@ -22,9 +22,9 @@ export class AppointmentRequestUseCaseImpl implements AppointmentRequestUseCase 
     }
   }
 
-  async getAllAppointmentRequests(): Promise<AppointmentRequest[]> {
+  async getAllAppointmentRequests(getAllAppointmentRequestDto: GetAllAppointmentRequestDto): Promise<AppointmentRequest[]> {
     try {
-      return await this.appointmentRequestRepository.findAll();
+      return await this.appointmentRequestRepository.findAll(getAllAppointmentRequestDto);
     } catch (error) {
       console.error('Error in getAllAppointmentRequests use case:', error);
       throw error;

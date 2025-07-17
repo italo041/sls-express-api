@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ApiResponse } from '../../domain/interfaces/api.interface';
 import { AppointmentRequestUseCase } from '../../domain/contracts/use-cases/appointment-request.use-case';
-import { CreateAppointmentRequestDto } from '../../domain/entities/appointment-request.entity';
+import { CreateAppointmentRequestDto, GetAllAppointmentRequestDto } from '../../domain/entities/appointment-request.entity';
 
 export class AppointmentRequestController {
   constructor(private appointmentRequestUseCase: AppointmentRequestUseCase) {}
@@ -30,7 +30,8 @@ export class AppointmentRequestController {
 
   async getAllAppointmentRequests(req: Request, res: Response): Promise<void> {
     try {
-      const appointmentRequests = await this.appointmentRequestUseCase.getAllAppointmentRequests();
+      const appointmentRequestData = req.query as unknown as GetAllAppointmentRequestDto;
+      const appointmentRequests = await this.appointmentRequestUseCase.getAllAppointmentRequests(appointmentRequestData);
 
       const response: ApiResponse = {
         success: true,

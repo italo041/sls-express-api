@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { CreateAppointmentRequestDto } from '../../domain/entities/appointment-request.entity';
+import { CreateAppointmentRequestDto, GetAllAppointmentRequestDto } from '../../domain/entities/appointment-request.entity';
 
 export const createAppointmentRequestDtoSchema = Joi.object<CreateAppointmentRequestDto>({
   insureId: Joi.string().required().length(5).messages({
@@ -23,8 +23,30 @@ export const createAppointmentRequestDtoSchema = Joi.object<CreateAppointmentReq
   }),
 });
 
+export const getAllAppointmentRequestDtoSchema = Joi.object<GetAllAppointmentRequestDto>({
+  insureId: Joi.string().optional().length(5).messages({
+    'string.empty': 'insureId no puede estar vacío',
+    'string.length': 'insureId debe tener exactamente 5 caracteres',
+  }),
+})
+  .options({
+    allowUnknown: false,
+    stripUnknown: false,
+  })
+  .messages({
+    'object.unknown': 'El parámetro "{#label}" no está permitido',
+  });
+
 export const validateCreateAppointmentRequestDto = (data: any): { error?: Joi.ValidationError; value?: CreateAppointmentRequestDto } => {
   return createAppointmentRequestDtoSchema.validate(data, {
+    abortEarly: false,
+    stripUnknown: true,
+    convert: true,
+  });
+};
+
+export const validateGetAllAppointmentRequestDto = (data: any): { error?: Joi.ValidationError; value?: GetAllAppointmentRequestDto } => {
+  return getAllAppointmentRequestDtoSchema.validate(data, {
     abortEarly: false,
     stripUnknown: true,
     convert: true,
