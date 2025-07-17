@@ -1,4 +1,4 @@
-import { Schedule, CreateScheduleDto } from '../../domain/entities/schedule.entity';
+import { Schedule, CreateScheduleDto, UpdateScheduleDto } from '../../domain/entities/schedule.entity';
 import { ScheduleRepository } from '../../domain/contracts/repositories/schedule.repository';
 import { ScheduleUseCase } from '../../domain/contracts/use-cases/schedule.use-case';
 import { NotificationService } from '../../domain/interfaces/notification.interface';
@@ -27,6 +27,15 @@ export class ScheduleUseCaseImpl implements ScheduleUseCase {
       return await this.scheduleRepository.findAll();
     } catch (error) {
       console.error('Error in getAllSchedules use case:', error);
+      throw error;
+    }
+  }
+
+  async updateSchedule(updateScheduleDto: UpdateScheduleDto): Promise<Schedule> {
+    try {
+      return await this.scheduleRepository.update(updateScheduleDto);
+    } catch (error) {
+      console.error('Error in updateSchedule use case:', error);
       throw error;
     }
   }

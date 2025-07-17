@@ -40,6 +40,7 @@ export class SNSService implements NotificationService {
       insureId: schedule.insureId,
       countryISO: schedule.countryISO,
       state: schedule.state,
+      dynamoId: schedule.id,
       timestamp: new Date().toISOString(),
     });
 

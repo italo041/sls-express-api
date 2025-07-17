@@ -1,5 +1,5 @@
-import { PutCommand, DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
-import { Schedule, CreateScheduleDto } from '../../../domain/entities/schedule.entity';
+import { PutCommand, DynamoDBDocumentClient, ScanCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { Schedule, CreateScheduleDto, ScheduleState, UpdateScheduleDto } from '../../../domain/entities/schedule.entity';
 import { ScheduleRepository } from '../../../domain/contracts/repositories/schedule.repository';
 import { DynamoDBClientConfig } from '../../config/dynamodb.client';
 import * as uuid from 'uuid';
@@ -22,7 +22,7 @@ export class DynamoScheduleRepository implements ScheduleRepository {
         insureId,
         scheduleId,
         countryISO,
-        state: 'PENDING',
+        state: ScheduleState.PENDING,
       };
 
       const command = new PutCommand({
@@ -49,6 +49,31 @@ export class DynamoScheduleRepository implements ScheduleRepository {
     } catch (error) {
       console.error('Error fetching all schedules:', error);
       throw new Error('Failed to fetch schedules');
+    }
+  }
+
+  async update(updateScheduleDto: UpdateScheduleDto): Promise<Schedule> {
+    try {
+      const { id, state } = updateScheduleDto;
+
+      const command = new UpdateCommand({
+        TableName: this.tableName,
+        Key: { id },
+        UpdateExpression: 'SET #state = :state',
+        ExpressionAttributeNames: {
+          '#state': 'state'
+        },
+        ExpressionAttributeValues: {
+          ':state': state
+        },
+        ReturnValues: 'ALL_NEW'
+      });
+
+      const result = await this.docClient.send(command);
+      return result.Attributes as Schedule;
+    } catch (error) {
+      console.error('Error updating schedule:', error);
+      throw new Error('Failed to update schedule');
     }
   }
 }

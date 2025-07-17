@@ -52,6 +52,12 @@ functions:
     handler: src/handler.handler
     events:
       - httpApi: '*'
+  sqsHandler:
+    handler: src/sqsHandler.handler
+    events:
+      - sqs:
+          arn: arn:aws:sqs:us-east-1:694388923130:sls-appointment-pe-schedule-events-dev
+          batchSize: 10
 
 custom:
   serverless-offline:
