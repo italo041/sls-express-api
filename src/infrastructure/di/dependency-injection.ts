@@ -2,10 +2,13 @@ import { AppointmentRequestController } from '../../presentation/controllers/app
 import { DynamoAppointmentRequestRepository } from '../repositories/dynamodb/dynamo-appointment-request.repository';
 import { AppointmentRequestUseCaseImpl } from '../../application/use-cases/appointment-request.use-case';
 import { SNSService } from '../services/sns.service';
+import { AppointmentUseCaseImpl } from '../../application/use-cases/appointment.use-case';
+import { AppointmentRepositoryImpl } from '../repositories/mysql/appointment.repository';
 
 export class DependencyInjection {
   private static appointmentRequestController: AppointmentRequestController;
   private static appointmentRequestUseCase: AppointmentRequestUseCaseImpl;
+  private static appointmentUseCase: AppointmentUseCaseImpl;
 
   static getAppointmentRequestUseCase(): AppointmentRequestUseCaseImpl {
     if (!this.appointmentRequestUseCase) {
@@ -24,5 +27,14 @@ export class DependencyInjection {
     }
 
     return this.appointmentRequestController;
+  }
+
+  static getAppointmentUseCase(): AppointmentUseCaseImpl {
+    if (!this.appointmentUseCase) {
+      const appointmentRepository = new AppointmentRepositoryImpl();
+      this.appointmentUseCase = new AppointmentUseCaseImpl(appointmentRepository);
+    }
+
+    return this.appointmentUseCase;
   }
 }

@@ -10,7 +10,7 @@ export enum AppointmentStatus {
 }
 
 export interface Appointment {
-  id: string;
+  id: number;
   insureId: string;
   scheduleId: number;
   countryISO: CountryISO;

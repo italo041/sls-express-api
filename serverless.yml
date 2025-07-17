@@ -14,6 +14,11 @@ provider:
     NODE_ENV: ${opt:stage, 'dev'}
     APPOINTMENTS_REQUEST_TABLE: ${self:service}-appointments-requests-${opt:stage, 'dev'}
     SNS_TOPIC_ARN: arn:aws:sns:${self:provider.region}:${env:AWS_ACCOUNT_ID}:${self:service}-schedule-topic-${opt:stage, 'dev'}
+    DB_HOST_PE: ${env:DB_HOST_PE}
+    DB_PORT_PE: ${env:DB_PORT_PE, '3306'}
+    DB_USERNAME_PE: ${env:DB_USERNAME_PE}
+    DB_PASSWORD_PE: ${env:DB_PASSWORD_PE}
+    DB_NAME_PE: ${env:DB_NAME_PE}
   iam:
     role:
       statements:
@@ -58,6 +63,15 @@ functions:
       - sqs:
           arn: ${env:SQS_APPOINTMENT_ARN}
           batchSize: 10
+  appointmentPeHandler:
+    handler: src/appointment-pe-handler.handler
+    timeout: 30
+    logRetentionInDays: 14
+    events:
+      - sqs:
+          arn: 
+            Fn::GetAtt: [SqsPeQueue, Arn]
+          batchSize: 10
 
 custom:
   serverless-offline:
@@ -68,6 +82,11 @@ custom:
     logging: true
     include:
       - AWS_ACCOUNT_ID
+      - DB_HOST_PE
+      - DB_PORT_PE
+      - DB_USERNAME_PE
+      - DB_PASSWORD_PE
+      - DB_NAME_PE
       
 resources:
   Resources:
