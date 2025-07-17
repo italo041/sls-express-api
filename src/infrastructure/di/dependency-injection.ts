@@ -9,9 +9,9 @@ export class DependencyInjection {
 
   static getAppointmentRequestUseCase(): AppointmentRequestUseCaseImpl {
     if (!this.appointmentRequestUseCase) {
-      const scheduleRepository = new DynamoAppointmentRequestRepository();
+      const appointmentRequestRepository = new DynamoAppointmentRequestRepository();
       const snsService = new SNSService();
-      this.appointmentRequestUseCase = new AppointmentRequestUseCaseImpl(scheduleRepository, snsService);
+      this.appointmentRequestUseCase = new AppointmentRequestUseCaseImpl(appointmentRequestRepository, snsService);
     }
 
     return this.appointmentRequestUseCase;
@@ -19,8 +19,8 @@ export class DependencyInjection {
 
   static getAppointmentRequestController(): AppointmentRequestController {
     if (!this.appointmentRequestController) {
-      const scheduleUseCase = this.getAppointmentRequestUseCase();
-      this.appointmentRequestController = new AppointmentRequestController(scheduleUseCase);
+      const appointmentUseCase = this.getAppointmentRequestUseCase();
+      this.appointmentRequestController = new AppointmentRequestController(appointmentUseCase);
     }
 
     return this.appointmentRequestController;
