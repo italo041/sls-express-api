@@ -90,6 +90,10 @@ custom:
       - DB_PASSWORD_CL
       - DB_NAME_CL
 
+package:
+  include:
+    - swagger.yaml
+
 functions:
   api:
     handler: src/handler.apiHandler

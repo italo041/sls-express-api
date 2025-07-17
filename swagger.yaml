@@ -1,0 +1,320 @@
+openapi: 3.0.0
+info:
+  title: Serverless Express API
+  version: 1.0.0
+  description: API para gestión de citas médicas con arquitectura limpia y TypeScript
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: http://localhost:3000
+    description: Url local de desarrollo
+  - url: Modifica tu url aquí
+    description: Url de serverless
+paths:
+  /:
+    get:
+      summary: Endpoint raíz de la API
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Información básica de la API
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          version:
+                            type: string
+                            example: "1.0.0"
+                          timestamp:
+                            type: string
+                            format: date-time
+                          uptime:
+                            type: number
+                            description: Tiempo de actividad en segundos
+                          endpoints:
+                            type: object
+
+  /health:
+    get:
+      summary: Verificar el estado de salud del servicio
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Servicio funcionando correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                            example: "OK"
+                          timestamp:
+                            type: string
+                            format: date-time
+                          uptime:
+                            type: number
+                            description: Tiempo de actividad en segundos
+
+  /appointment-request:
+    post:
+      summary: Crear una nueva solicitud de cita
+      tags:
+        - Appointment Requests
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAppointmentRequestDto'
+      responses:
+        '200':
+          description: Solicitud de cita creada exitosamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AppointmentRequest'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    
+    get:
+      summary: Obtener todas las solicitudes de citas
+      tags:
+        - Appointment Requests
+      parameters:
+        - in: query
+          name: insureId
+          schema:
+            type: string
+            minLength: 5
+            maxLength: 5
+          description: ID del asegurado para filtrar
+          example: "12345"
+      responses:
+        '200':
+          description: Lista de solicitudes de citas obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AppointmentRequest'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    # DTOs de entrada
+    CreateAppointmentRequestDto:
+      type: object
+      required:
+        - insureId
+        - scheduleId
+        - countryISO
+      properties:
+        insureId:
+          type: string
+          description: ID del asegurado
+          minLength: 5
+          maxLength: 5
+          example: "12345"
+        scheduleId:
+          type: integer
+          description: ID del horario médico
+          minimum: 1
+          example: 123
+        countryISO:
+          $ref: '#/components/schemas/CountryISO'
+
+    GetAllAppointmentRequestDto:
+      type: object
+      properties:
+        insureId:
+          type: string
+          description: ID del asegurado para filtrar (opcional)
+          minLength: 5
+          maxLength: 5
+          example: "12345"
+
+    UpdateAppointmentRequestDto:
+      type: object
+      required:
+        - id
+        - state
+      properties:
+        id:
+          type: string
+          description: ID único de la solicitud de cita
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        state:
+          $ref: '#/components/schemas/AppointmentRequestStatus'
+
+    # Entidades de dominio
+    AppointmentRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID único de la solicitud de cita
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        insureId:
+          type: string
+          description: ID del asegurado
+          example: "12345"
+        scheduleId:
+          type: integer
+          description: ID del horario médico
+          example: 123
+        countryISO:
+          $ref: '#/components/schemas/CountryISO'
+        state:
+          $ref: '#/components/schemas/AppointmentRequestStatus'
+
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único de la cita
+          example: 1
+        insureId:
+          type: string
+          description: ID del asegurado
+          example: "12345"
+        scheduleId:
+          type: integer
+          description: ID del horario médico
+          example: 123
+        countryISO:
+          $ref: '#/components/schemas/CountryISO'
+        state:
+          $ref: '#/components/schemas/AppointmentStatus'
+        dynamoId:
+          type: string
+          description: ID de la solicitud en DynamoDB
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha de creación
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha de última actualización
+          example: "2024-01-15T11:30:00Z"
+
+    # Enums
+    CountryISO:
+      type: string
+      enum:
+        - PE
+        - CL
+      description: Código ISO del país
+      example: "PE"
+
+    AppointmentRequestStatus:
+      type: string
+      enum:
+        - PENDING
+        - COMPLETED
+        - CANCELED
+      description: Estado de la solicitud de cita
+      example: "PENDING"
+
+    AppointmentStatus:
+      type: string
+      enum:
+        - PENDING
+        - COMPLETED
+        - CANCELED
+      description: Estado de la cita
+      example: "COMPLETED"
+
+    # Respuestas estándar
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indica si la operación fue exitosa
+          example: true
+        message:
+          type: string
+          description: Mensaje descriptivo de la respuesta
+          example: "Operación realizada exitosamente"
+
+  responses:
+    Success:
+      description: Operación exitosa
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+
+    BadRequest:
+      description: Solicitud incorrecta - Error de validación
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ApiResponse'
+              - type: object
+                properties:
+                  success:
+                    example: false
+                  error:
+                    example: "Validation failed"
+                  message:
+                    example: "insureId es requerido, scheduleId debe ser un número positivo"
+
+    InternalServerError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ApiResponse'
+              - type: object
+                properties:
+                  success:
+                    example: false
+                  error:
+                    example: "Internal server error"
+                  message:
+                    example: "Ha ocurrido un error inesperado"
+
+tags:
+  - name: Health
+    description: Endpoints de salud del sistema
+  - name: Appointment Requests
+    description: Operaciones relacionadas con solicitudes de citas médicas

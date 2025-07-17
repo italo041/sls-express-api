@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { ControllerDI } from '../di/controller.di';
 import { ApiResponse } from '../../domain/interfaces/api.interface';
 import { createAppointmentRequestRoutes } from '../../presentation/routes/appointment-request.routes';
+import { swaggerSpec, swaggerYaml } from '../config/swagger.config';
 
 export function createApp(): express.Application {
   const app = express();
@@ -23,6 +24,7 @@ export function createApp(): express.Application {
     }
   });
 
+  // Endpoint raíz de la API
   app.get('/', (req: Request, res: Response) => {
     const response: ApiResponse = {
       success: true,
@@ -32,13 +34,14 @@ export function createApp(): express.Application {
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
         endpoints: {
-          templates: '/schedules',
+          templates: '/appointment-request',
         },
       },
     };
     res.status(200).json(response);
   });
 
+  // Endpoint de verificación de salud del servicio
   app.get('/health', (req: Request, res: Response) => {
     const response: ApiResponse = {
       success: true,
@@ -50,6 +53,10 @@ export function createApp(): express.Application {
       },
     };
     res.status(200).json(response);
+  });
+
+  app.get('/swagger.json', (req: Request, res: Response) => {
+    res.status(200).json(swaggerSpec);
   });
 
   // Inyección de dependencias y configuración de rutas
