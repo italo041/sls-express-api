@@ -19,6 +19,8 @@ provider:
     DB_USERNAME_PE: ${env:DB_USERNAME_PE}
     DB_PASSWORD_PE: ${env:DB_PASSWORD_PE}
     DB_NAME_PE: ${env:DB_NAME_PE}
+
+    EVENT_BUS_NAME: ${env:EVENT_BUS_NAME, 'event_bus_appointments'}
   iam:
     role:
       statements:
@@ -46,6 +48,12 @@ provider:
           Resource:
             - 'Fn::GetAtt': [SqsPeQueue, Arn]
             - 'Fn::GetAtt': [SqsClQueue, Arn]
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource: 
+            - arn:aws:events:${self:provider.region}:*:event-bus/*
+            - arn:aws:events:${self:provider.region}:*:event-bus/event_bus_appointments
 
 plugins:
   - serverless-plugin-typescript
@@ -61,7 +69,8 @@ functions:
     handler: src/sqsHandler.handler
     events:
       - sqs:
-          arn: ${env:SQS_APPOINTMENT_ARN}
+          arn:
+            Fn::GetAtt: [AppointmentsEventsQueue, Arn]
           batchSize: 10
   appointmentPeHandler:
     handler: src/appointment-pe-handler.handler
@@ -87,9 +96,12 @@ custom:
       - DB_USERNAME_PE
       - DB_PASSWORD_PE
       - DB_NAME_PE
+      - EVENT_BUS_NAME
       
 resources:
   Resources:
+    
+
     AppointmentsRequestTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -224,7 +236,79 @@ resources:
         FilterPolicy:
           country: ["CL"]
 
+    # EventBridge Custom Event Bus
+    AppointmentsEventBus:
+      Type: AWS::Events::EventBus
+      Properties:
+        Name: ${env:EVENT_BUS_NAME, 'event_bus_appointments'}
+        Tags:
+          - Key: Environment
+            Value: ${opt:stage, 'dev'}
+          - Key: Service
+            Value: ${self:service}
+
+    # SQS Queue for Appointment Events
+    AppointmentsEventsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-appointments-events-${opt:stage, 'dev'}
+        VisibilityTimeout: 180
+        MessageRetentionPeriod: 1209600 # 14 días
+        ReceiveMessageWaitTimeSeconds: 20
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt AppointmentsEventsDeadLetterQueue.Arn
+          maxReceiveCount: 3
+
+    # Dead Letter Queue for Appointment Events
+    AppointmentsEventsDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-appointments-events-dlq-${opt:stage, 'dev'}
+        MessageRetentionPeriod: 1209600 # 14 días
+
+    # EventBridge Rule for Appointment Events
+    AppointmentsEventsRule:
+      Type: AWS::Events::Rule
+      Properties:
+        Name: ${self:service}-appointments-events-rule-${opt:stage, 'dev'}
+        Description: "Captura eventos de appointments creados"
+        EventBusName: !Ref AppointmentsEventBus
+        EventPattern:
+          source:
+            - "appointments.source"
+          detail-type:
+            - "Appointment Created"
+        State: ENABLED
+        Targets:
+          - Arn: !GetAtt AppointmentsEventsQueue.Arn
+            Id: "AppointmentsEventsQueueTarget"
+
+    # SQS Queue Policy for Appointment Events
+    AppointmentsEventsQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - !Ref AppointmentsEventsQueue
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: events.amazonaws.com
+              Action:
+                - sqs:SendMessage
+              Resource: !GetAtt AppointmentsEventsQueue.Arn
+              Condition:
+                ArnEquals:
+                  aws:SourceArn: !GetAtt AppointmentsEventsRule.Arn
+
   Outputs:
+    AppointmentsEventBus:
+      Description: EventBridge Custom Event Bus for Appointments
+      Value:
+        Ref: AppointmentsEventBus
+      Export:
+        Name: ${self:service}-appointments-event-bus-${opt:stage, 'dev'}
+
     AppointmentsRequestTable:
       Description: DynamoDB Table for Appointments Requests
       Value:
@@ -252,3 +336,15 @@ resources:
         Ref: SqsClQueue
       Export:
         Name: ${self:service}-sqs-cl-queue-${opt:stage, 'dev'}
+
+    AppointmentsEventsQueueUrl:
+      Description: "URL de la cola SQS para eventos de appointments"
+      Value: !Ref AppointmentsEventsQueue
+      Export:
+        Name: ${self:service}-appointments-events-queue-url-${opt:stage, 'dev'}
+
+    AppointmentsEventsQueueArn:
+      Description: "ARN de la cola SQS para eventos de appointments"
+      Value: !GetAtt AppointmentsEventsQueue.Arn
+      Export:
+        Name: ${self:service}-appointments-events-queue-arn-${opt:stage, 'dev'}

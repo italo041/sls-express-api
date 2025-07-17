@@ -16,6 +16,8 @@ export interface Appointment {
   countryISO: CountryISO;
   state: AppointmentStatus;
   dynamoId: string;
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
 export interface CreateAppointmentDto {

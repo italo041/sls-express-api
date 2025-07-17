@@ -4,6 +4,7 @@ import { AppointmentRequestUseCaseImpl } from '../../application/use-cases/appoi
 import { SNSService } from '../services/sns.service';
 import { AppointmentUseCaseImpl } from '../../application/use-cases/appointment.use-case';
 import { AppointmentRepositoryImpl } from '../repositories/mysql/appointment.repository';
+import { EventBridgeServiceImpl } from '../services/eventbridge.service';
 
 export class DependencyInjection {
   private static appointmentRequestController: AppointmentRequestController;
@@ -32,7 +33,8 @@ export class DependencyInjection {
   static getAppointmentUseCase(): AppointmentUseCaseImpl {
     if (!this.appointmentUseCase) {
       const appointmentRepository = new AppointmentRepositoryImpl();
-      this.appointmentUseCase = new AppointmentUseCaseImpl(appointmentRepository);
+      const eventBridgeService = new EventBridgeServiceImpl();
+      this.appointmentUseCase = new AppointmentUseCaseImpl(appointmentRepository, eventBridgeService);
     }
 
     return this.appointmentUseCase;

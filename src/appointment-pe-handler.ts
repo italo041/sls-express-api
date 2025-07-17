@@ -29,6 +29,7 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
         scheduleId: parseInt(messagePayload.scheduleId),
         countryISO: messagePayload.countryISO,
         dynamoId: messagePayload.dynamoId,
+        state: messagePayload.state,
       };
 
       const appointment = await appointmentUseCase.createAppointment(createAppointmentDto);

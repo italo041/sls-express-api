@@ -1,6 +1,7 @@
 import { SQSHandler, SQSEvent } from 'aws-lambda';
 import { DependencyInjection } from './infrastructure/di/dependency-injection';
-import { AppointmentRequestStatus, UpdateAppointmentRequestDto } from './domain/entities/appointment-request.entity';
+import { UpdateAppointmentRequestDto } from './domain/entities/appointment-request.entity';
+import { Appointment } from './domain/entities/appointment.entity';
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
   console.log(`Received ${event.Records.length} messages from SQS`);
@@ -13,12 +14,12 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
       console.log(`Message body: ${record.body}`);
 
       const snsMessage = JSON.parse(record.body);
-      const messagePayload = snsMessage.detail;
+      const messagePayload: Appointment = snsMessage.detail;
       console.log(`Appointment data:`, messagePayload);
 
       const updateAppointmentRequestDto: UpdateAppointmentRequestDto = {
         id: messagePayload.dynamoId,
-        state: AppointmentRequestStatus.COMPLETED,
+        state: messagePayload.state as any,
       };
 
       const appointment = await appointmentRequestUseCase.updateAppointmentRequest(updateAppointmentRequestDto);
