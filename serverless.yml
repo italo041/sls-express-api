@@ -14,11 +14,18 @@ provider:
     NODE_ENV: ${opt:stage, 'dev'}
     APPOINTMENTS_REQUEST_TABLE: ${self:service}-appointments-requests-${opt:stage, 'dev'}
     SNS_TOPIC_ARN: arn:aws:sns:${self:provider.region}:${env:AWS_ACCOUNT_ID}:${self:service}-schedule-topic-${opt:stage, 'dev'}
+    
     DB_HOST_PE: ${env:DB_HOST_PE}
     DB_PORT_PE: ${env:DB_PORT_PE, '3306'}
     DB_USERNAME_PE: ${env:DB_USERNAME_PE}
     DB_PASSWORD_PE: ${env:DB_PASSWORD_PE}
     DB_NAME_PE: ${env:DB_NAME_PE}
+
+    DB_HOST_CL: ${env:DB_HOST_CL}
+    DB_PORT_CL: ${env:DB_PORT_CL, '3306'}
+    DB_USERNAME_CL: ${env:DB_USERNAME_CL}
+    DB_PASSWORD_CL: ${env:DB_PASSWORD_CL}
+    DB_NAME_CL: ${env:DB_NAME_CL}
 
     EVENT_BUS_NAME: ${env:EVENT_BUS_NAME, 'event_bus_appointments'}
   iam:
@@ -81,6 +88,15 @@ functions:
           arn: 
             Fn::GetAtt: [SqsPeQueue, Arn]
           batchSize: 10
+  appointmentClHandler:
+    handler: src/appointment-cl-handler.handler
+    timeout: 30
+    logRetentionInDays: 14
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [SqsClQueue, Arn]
+          batchSize: 10
 
 custom:
   serverless-offline:
@@ -97,11 +113,15 @@ custom:
       - DB_PASSWORD_PE
       - DB_NAME_PE
       - EVENT_BUS_NAME
-      
+      - DB_HOST_CL
+      - DB_PORT_CL
+      - DB_USERNAME_CL
+      - DB_PASSWORD_CL
+      - DB_NAME_CL
+
 resources:
   Resources:
-    
-
+    # DynamoDB Table for Appointments Requests
     AppointmentsRequestTable:
       Type: AWS::DynamoDB::Table
       Properties:

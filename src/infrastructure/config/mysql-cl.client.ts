@@ -1,14 +1,14 @@
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { AppointmentTypeOrmEntity } from '../repositories/mysql-pe/entities/appointment.entity';
+import { AppointmentTypeOrmEntity } from '../repositories/mysql-cl/entities/appointment.entity';
 
 const databaseConfig: DataSourceOptions = {
   type: 'mysql',
-  host: process.env.DB_HOST_PE || 'localhost',
-  port: parseInt(process.env.DB_PORT_PE || '3306'),
-  username: process.env.DB_USERNAME_PE || 'root',
-  password: process.env.DB_PASSWORD_PE || '',
-  database: process.env.DB_NAME_PE || 'appointment_db',
+  host: process.env.DB_HOST_CL || 'localhost',
+  port: parseInt(process.env.DB_PORT_CL || '3306'),
+  username: process.env.DB_USERNAME_CL || 'root',
+  password: process.env.DB_PASSWORD_CL || '',
+  database: process.env.DB_NAME_CL || 'appointment_db',
   ssl:
     process.env.NODE_ENV === 'production'
       ? {

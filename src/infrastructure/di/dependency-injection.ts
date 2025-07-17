@@ -3,13 +3,15 @@ import { DynamoAppointmentRequestRepository } from '../repositories/dynamodb/dyn
 import { AppointmentRequestUseCaseImpl } from '../../application/use-cases/appointment-request.use-case';
 import { SNSService } from '../services/sns.service';
 import { AppointmentUseCaseImpl } from '../../application/use-cases/appointment.use-case';
-import { AppointmentRepositoryImpl } from '../repositories/mysql/appointment.repository';
+import { AppointmentRepositoryImpl } from '../repositories/mysql-pe/appointment.repository';
 import { EventBridgeServiceImpl } from '../services/eventbridge.service';
+import { AppointmentRepositoryImpl as AppointmentRepositoryImplCL } from '../repositories/mysql-cl/appointment.repository';
 
 export class DependencyInjection {
   private static appointmentRequestController: AppointmentRequestController;
   private static appointmentRequestUseCase: AppointmentRequestUseCaseImpl;
   private static appointmentUseCase: AppointmentUseCaseImpl;
+  private static appointmentUseCaseCL: AppointmentUseCaseImpl;
 
   static getAppointmentRequestUseCase(): AppointmentRequestUseCaseImpl {
     if (!this.appointmentRequestUseCase) {
@@ -38,5 +40,15 @@ export class DependencyInjection {
     }
 
     return this.appointmentUseCase;
+  }
+
+  static getAppointmentUseCaseCL(): AppointmentUseCaseImpl {
+    if (!this.appointmentUseCaseCL) {
+      const appointmentRepository = new AppointmentRepositoryImplCL();
+      const eventBridgeService = new EventBridgeServiceImpl();
+      this.appointmentUseCaseCL = new AppointmentUseCaseImpl(appointmentRepository, eventBridgeService);
+    }
+
+    return this.appointmentUseCaseCL;
   }
 }
