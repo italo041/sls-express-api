@@ -13,7 +13,6 @@ export class SNSService implements NotificationService {
 
   async publishMessage(notificationMessage: NotificationMessage): Promise<void> {
     try {
-
       if (!notificationMessage.topicArn || notificationMessage.topicArn.trim() === '') {
         throw new Error('SNS Topic ARN is missing or empty');
       }

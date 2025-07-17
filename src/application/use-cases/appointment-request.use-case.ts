@@ -1,4 +1,9 @@
-import { AppointmentRequest, CreateAppointmentRequestDto, GetAllAppointmentRequestDto, UpdateAppointmentRequestDto } from '../../domain/entities/appointment-request.entity';
+import {
+  AppointmentRequest,
+  CreateAppointmentRequestDto,
+  GetAllAppointmentRequestDto,
+  UpdateAppointmentRequestDto,
+} from '../../domain/entities/appointment-request.entity';
 import { AppointmentRequestRepository } from '../../domain/contracts/repositories/appointment-request.repository';
 import { AppointmentRequestUseCase } from '../../domain/contracts/use-cases/appointment-request.use-case';
 import { NotificationService } from '../../domain/interfaces/notification.interface';

@@ -24,7 +24,7 @@ export class EventBridgeServiceImpl implements EventBridgeService {
               countryISO: appointment.countryISO,
               createdAt: appointment.createdAt.toISOString(),
               dynamoId: appointment.dynamoId,
-              state: appointment.state
+              state: appointment.state,
             }),
             EventBusName: this.eventBusName,
           },

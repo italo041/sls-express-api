@@ -28,5 +28,5 @@ export interface UpdateAppointmentRequestDto {
 }
 
 export interface GetAllAppointmentRequestDto {
-  insureId: string; 
+  insureId: string;
 }

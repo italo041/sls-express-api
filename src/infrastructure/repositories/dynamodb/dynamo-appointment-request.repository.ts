@@ -1,5 +1,11 @@
 import { PutCommand, DynamoDBDocumentClient, ScanCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import { AppointmentRequest, CreateAppointmentRequestDto, AppointmentRequestStatus, UpdateAppointmentRequestDto, GetAllAppointmentRequestDto } from '../../../domain/entities/appointment-request.entity';
+import {
+  AppointmentRequest,
+  CreateAppointmentRequestDto,
+  AppointmentRequestStatus,
+  UpdateAppointmentRequestDto,
+  GetAllAppointmentRequestDto,
+} from '../../../domain/entities/appointment-request.entity';
 import { AppointmentRequestRepository } from '../../../domain/contracts/repositories/appointment-request.repository';
 import { DynamoDBClientConfig } from '../../config/dynamodb.client';
 import * as uuid from 'uuid';
@@ -65,7 +71,7 @@ export class DynamoAppointmentRequestRepository implements AppointmentRequestRep
       const command = new ScanCommand(scanParams);
 
       const result = await this.docClient.send(command);
-      return result.Items as AppointmentRequest[] || [];
+      return (result.Items as AppointmentRequest[]) || [];
     } catch (error) {
       console.error('Error fetching all appointment requests:', error);
       throw new Error('Failed to fetch appointment requests');
@@ -81,12 +87,12 @@ export class DynamoAppointmentRequestRepository implements AppointmentRequestRep
         Key: { id },
         UpdateExpression: 'SET #state = :state',
         ExpressionAttributeNames: {
-          '#state': 'state'
+          '#state': 'state',
         },
         ExpressionAttributeValues: {
-          ':state': state
+          ':state': state,
         },
-        ReturnValues: 'ALL_NEW'
+        ReturnValues: 'ALL_NEW',
       });
 
       const result = await this.docClient.send(command);
