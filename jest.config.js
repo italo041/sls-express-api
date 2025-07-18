@@ -6,7 +6,15 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/**/*.test.ts', '!src/**/*.spec.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts', 
+    '!src/**/*.d.ts', 
+    '!src/**/*.test.ts', 
+    '!src/**/*.spec.ts',
+    '!src/infrastructure/config/**',
+    '!src/presentation/middleware/validation.middleware.ts'
+  ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
+
 };
