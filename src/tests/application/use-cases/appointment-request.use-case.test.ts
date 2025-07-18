@@ -1,6 +1,6 @@
-import { AppointmentRequestUseCaseImpl } from '../../application/use-cases/appointment-request.use-case';
-import { AppointmentRequestRepository } from '../../domain/contracts/repositories/appointment-request.repository';
-import { NotificationService } from '../../domain/interfaces/notification.interface';
+import { AppointmentRequestUseCaseImpl } from '../../../application/use-cases/appointment-request.use-case';
+import { AppointmentRequestRepository } from '../../../domain/contracts/repositories/appointment-request.repository';
+import { NotificationService } from '../../../domain/interfaces/notification.interface';
 import {
   AppointmentRequest,
   CreateAppointmentRequestDto,
@@ -8,7 +8,7 @@ import {
   UpdateAppointmentRequestDto,
   CountryISO,
   AppointmentRequestStatus,
-} from '../../domain/entities/appointment-request.entity';
+} from '../../../domain/entities/appointment-request.entity';
 
 describe('AppointmentRequestUseCaseImpl', () => {
   let appointmentRequestUseCase: AppointmentRequestUseCaseImpl;

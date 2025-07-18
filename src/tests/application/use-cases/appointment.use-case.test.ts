@@ -1,12 +1,12 @@
-import { AppointmentUseCaseImpl } from '../../application/use-cases/appointment.use-case';
-import { AppointmentRepository } from '../../domain/contracts/repositories/appointment.repository';
-import { EventBridgeService } from '../../domain/interfaces/eventbridge.interface';
+import { AppointmentUseCaseImpl } from '../../../application/use-cases/appointment.use-case';
+import { AppointmentRepository } from '../../../domain/contracts/repositories/appointment.repository';
+import { EventBridgeService } from '../../../domain/interfaces/eventbridge.interface';
 import {
   Appointment,
   CreateAppointmentDto,
   CountryISO,
   AppointmentStatus,
-} from '../../domain/entities/appointment.entity';
+} from '../../../domain/entities/appointment.entity';
 
 describe('AppointmentUseCaseImpl', () => {
   let appointmentUseCase: AppointmentUseCaseImpl;
