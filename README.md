@@ -181,3 +181,6 @@ Los logs están disponibles en:
 - Las solicitudes se almacenan en DynamoDB para acceso rápido
 - Los eventos se procesan de forma asíncrona a través de EventBridge
 - La validación de datos se realiza usando esquemas Joi
+
+## Coverage
+![Coverage](./coverage.png)
