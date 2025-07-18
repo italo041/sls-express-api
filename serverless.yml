@@ -98,14 +98,21 @@ functions:
   api:
     handler: src/handler.apiHandler
     events:
-      - httpApi: '*'
+      - httpApi: 
+          path: '*'
+          method: '*'
+          throttle:
+            burstLimit: 10
+            rateLimit: 5
   sqsHandler:
     handler: src/handler.sqsHandler
+    timeout: 180
     events:
       - sqs:
           arn:
             Fn::GetAtt: [AppointmentsEventsQueue, Arn]
-          batchSize: 10
+          batchSize: 5
+          maximumBatchingWindowInSeconds: 10
   appointmentPeHandler:
     handler: src/handler.appointmentPeHandler
     timeout: 30
@@ -114,7 +121,8 @@ functions:
       - sqs:
           arn: 
             Fn::GetAtt: [SqsPeQueue, Arn]
-          batchSize: 10
+          batchSize: 5
+          maximumBatchingWindowInSeconds: 10
   appointmentClHandler:
     handler: src/handler.appointmentClHandler
     timeout: 30
@@ -123,7 +131,8 @@ functions:
       - sqs:
           arn:
             Fn::GetAtt: [SqsClQueue, Arn]
-          batchSize: 10
+          batchSize: 5
+          maximumBatchingWindowInSeconds: 10
     
 
 resources:
